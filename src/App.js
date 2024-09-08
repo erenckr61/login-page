@@ -9,8 +9,8 @@ const App = () => {
   const navigate = useNavigate();
   useEffect(() => {
     // İlk açılışta registration sayfasına yönlendirir
-    navigate('/dashboard');
-  }, [navigate]);
+    navigate('/registration');
+  }, [!navigate]);
 
   const routers = [
     {path:"/registration", component:RegisterForm},
