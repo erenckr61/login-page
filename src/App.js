@@ -7,8 +7,9 @@ import Dashboard from "./components/dashboard";
 
 const App = () => {
   const navigate = useNavigate();
-  useEffect(() => {
     // İlk açılışta registration sayfasına yönlendirir
+  useEffect(() => {
+  
     navigate('/registration');
   }, [!navigate]);
 

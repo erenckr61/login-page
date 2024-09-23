@@ -6,6 +6,9 @@ import { useState } from "react";
 import { Tab } from "@headlessui/react";
 import { useNavigate } from "react-router-dom"; // useNavigate hooku eklendi.
 
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser,loginUser } from "../redux/authSlice";
+
 const RegisterForm = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -14,8 +17,11 @@ const RegisterForm = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [selectedTab, setSelectedTab] = useState(1); // 0: Login, 1: Sign Up
 
+  const dispatch = useDispatch();
   const navigate = useNavigate(); // yönlendirme için hook
 
+  const {loading, token, user, error} = useSelector((state) => state.auth);
+  
     // Login işlemi
   const handleLogin = (e) => {
     e.preventDefault();
@@ -24,16 +30,25 @@ const RegisterForm = () => {
       alert("Please enter your email and password.");
       return;
     }
-
+    
+    console.log(email+"------"+password);
+    dispatch(loginUser({email, password})).then(({payload}) => {
+      console.log('Login Response:', payload);
+      if(payload) {//payload.token dı içerisi onceden
+        navigate("/dashboard");
+      } else {
+        alert("Invalid email or password.");
+      }
+    });
     // Kullanıcı bilgilerini localStorage'dan al
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+    // const storedUser = JSON.parse(localStorage.getItem("user"));
 
     // Kullanıcı bilgilerini doğrula
-    if (storedUser && storedUser.email === email && storedUser.password === password) {
-      navigate("/dashboard"); 
-    } else {
-      alert("Invalid email or password.");
-    }
+    // if (storedUser && storedUser.email === email && storedUser.password === password) {
+    //   navigate("/dashboard"); 
+    // } else {
+    //   alert("Invalid email or password.");
+    // }
     // Login işlemi başarılıysa bilgileri kaydedip yönlendir
     // localStorage.setItem("user", JSON.stringify({ email }));
 
@@ -78,17 +93,27 @@ const RegisterForm = () => {
       alert("Password must include at least one number.");
       return;
     }
-  
+    
+    dispatch(registerUser({firstName, lastName, email, password})).then(({payload}) => {
+       console.log("kayıt yanıtı:", payload);
+      if (payload){
+        setSelectedTab(0);
+        alert("Account created successfully! Please log in.");
+        setEmail("");
+        setPassword("");
+       
+      } 
+    });
   
     // Kullanıcı bilgilerini localStorage'a kaydet
-    localStorage.setItem('user', JSON.stringify({ firstName, lastName, email, password }));
+    // localStorage.setItem('user', JSON.stringify({ firstName, lastName, email, password }));
    
     //Login alanlarının temizlenmesi
-    setEmail("");
-    setPassword("");
+    // setEmail("");
+    // setPassword("");
 
     // Sign Up işleminden sonra Login sekmesine geç
-    setSelectedTab(0);
+    // setSelectedTab(0);
   
     // Login işlemi gerçekleştir
     // handleLoginFromSignup();

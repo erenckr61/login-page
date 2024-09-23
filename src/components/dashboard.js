@@ -3,26 +3,40 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { Tab } from '@headlessui/react';
 import HorizontalBar from '../components/HorizontalBar'; 
+import { useSelector } from 'react-redux';
 
  const Dashboard = () => {
-    const[user, setUser] = useState(null);
+    // const[user, setUser] = useState(null);
+    const user = useSelector((state) => state.auth.user);
     const navigate = useNavigate();
 
     useEffect(() => {
+      if (user) {
+          // Kullanıcı bilgileri alındı
+          console.log("Kullanıcı bilgileri:", user);
+      } else {
+          // Kullanıcı bilgileri alınamadıysa yönlendir
+          console.log("Kullanıcı bilgileri alınamadı.");
+          // navigate("/registration"); // Kullanıcı giriş yapmamışsa yönlendir
+      }
+    }, [user, navigate]);
+    //useEffect(() => {
        // Fetch user data from local storage when the dashboard loads
-        const storedUser = localStorage.getItem('user');
-        if(storedUser){
-            setUser(JSON.parse(storedUser));
-        }else {
-          // Redirect to login if no user is found
-          navigate("/");
-        }
-      }, [navigate]);
+        // const storedUser = localStorage.getItem('user');
+      //   if(storedUser){
+      //       setUser(JSON.parse(storedUser));
+      //       console.log("Kullanıcı giriş yapmış:", JSON.parse(storedUser)); 
+      //   }else {
+      //     console.log("Kullanıcı giriş yapmamış:"); 
+      //     // Redirect to login if no user is found
+      //     navigate("/");
+      //   }
+      // }, [navigate]);
 
       const handleLogout = () => {
         // Clear user data from local storage
         localStorage.removeItem("user");
-        navigate("/"); // Redirect back to login screen
+        navigate("/registration"); // Redirect back to login screen
       };
 
 
